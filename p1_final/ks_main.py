@@ -5,10 +5,11 @@
 # Last Edited by Mamtaj Akter Oct. 27, 2019
 #
 #
-# A sample program to select an auditory book and then scroll through the chapter list of that book and either continue playing the list of read items or to move through the list of read items single keystrokes.
+# A sample program to select an auditory book and then scroll through the chapter
+# list of that book and either continue playing the list of read items or to move
+# through the list of read items single keystrokes.
 #
 ################################################################################
-
 
 
 ################################################################################
@@ -98,6 +99,7 @@ PAGE_NUMBER_DIR = "page_numbers/"
 
 # BOOK_NUMBER_SO_LIST - book titles put into sound_objects
 
+# I had to put same book title wave files twice, otherwise it was giving error
 BOOK_NUMBER_FILENAMES = ("Book_Title.wav", "Book_Title.wav")
 BOOK_NUMBER_LOCATION = WAVE_DIR_PROVIDED + NORMAN_DIR
 BOOK_NUMBER_SO_LIST = list()
@@ -149,9 +151,9 @@ PRESS_SC_J_TO_GO_BACK = MISC_SO_LIST[17]
 
 
 ################################################################################
-# Announces the program's current state auditorily to the user, given the state AND SOUND_Q
-# parameter. For example, if the state value is 1, the program is in "CHAPTER SELECTION STATE",
-# and so, it plays 'Select Chapter' to the user.
+# Announces the program's current state auditorily to the user, given the state
+# AND SOUND_Q parameter. For example, if the state value is 1, the program is in
+# "CHAPTER SELECTION STATE", and so, it plays 'Select Chapter' to the user.
 ################################################################################
 def play_current_state(state, sound_q):
     if (state == 0):
@@ -166,6 +168,8 @@ def play_current_state(state, sound_q):
 # Plays the help message to the user, preceded by which STATE they are in.
 # Invoked when the user presses the help key, in any state.
 ################################################################################
+
+
 def play_help(state, sound_q):
     if (state == 0):
         # User in "BOOK SELECTION STATE", precede help messages with 'Select book'\
@@ -193,6 +197,8 @@ def play_help(state, sound_q):
 # Press <L> for help\nPress <;> to quit\nPress <SPACE> to select. "
 # preceded with just 'Select Book'
 ################################################################################
+
+
 def play_intro(sound_q):
     sound_q.put(SELECT_BOOK)
     sound_q.put(PRESS_SPACE)
@@ -214,7 +220,6 @@ def play_read_items(bookNumber, chapterNumber, sound_q):
         sound_q.put(s_obj)
 
 
-
 ################################################################################
 # Function to process user input. (This is a "producer".)
 # Catch the keystrokes from the user, and process the keystrokes.
@@ -227,13 +232,13 @@ def play_read_items(bookNumber, chapterNumber, sound_q):
 def keystroke_processor(sound_q, log_q, hold_q_e, stop_play_e):
 
     # Initialize the current system state and the book, chapter, read_item variables
-    # system state: 0 when the system is at the "START" state and also in "BOOK SELECTION STate"
+    # system state: 0 when the system is at the "START" state and also in
+    # "BOOK SELECTION STate"
     #
     systemState = 0
     bookNumber = 0
     chapterNumber = 0
     readItemNumber = 0
-
 
     # Play introductory full help message at the beginning of the program
     play_intro(sound_q)
@@ -249,10 +254,11 @@ def keystroke_processor(sound_q, log_q, hold_q_e, stop_play_e):
         # User presses the SELECT key : <SPACE> It leads user to go to the next state
         if (key == ks_GLOBAL.SPACE_BAR):
             systemState += 1
-            # if user is in now in the read_items state, play the "Continue to read, <Book_title> <read_items_of_chapter 2>..."
+            # if user is in now in the read_items state, play the "Continue to read,
+            # <Book_title> <read_items_of_chapter 2>..."
             if (systemState == 2):
                 # if user selects chapter 2
-                if (chapterNumber==1):
+                if (chapterNumber == 1):
                     # Stop any currently playing sounds, and clear the queue.
                     ks_stop.stop_sounds(sound_q, log_q, hold_q_e, stop_play_e)
                     # to continue plaing the read items of chapter 2
@@ -262,11 +268,13 @@ def keystroke_processor(sound_q, log_q, hold_q_e, stop_play_e):
                 else:
                     # Stop any currently playing sounds, and clear the queue.
                     ks_stop.stop_sounds(sound_q, log_q, hold_q_e, stop_play_e)
-                    # Play "NOT_AVAILABLE" and "Press <;> and then press <J> to go to select another chapter"
+                    # Play "NOT_AVAILABLE" and "Press <;> and then press <J> to
+                    # go to select another chapter"
                     sound_q.put(CHAPTER_NUMBER_SO_LIST[chapterNumber])
                     sound_q.put(NOT_AVAILABLE)
                     sound_q.put(PRESS_SC_J_TO_GO_BACK)
-            # Reset the systemState back to 0, when the systemState is more than the CONTINUE READING STATE: 2
+            # Reset the systemState back to 0, when the systemState is more than
+            # the CONTINUE READING STATE: 2
             if (systemState > 2):
                 systemState = 0
             # Stop any currently playing sounds, and clear the queue.
@@ -286,7 +294,8 @@ def keystroke_processor(sound_q, log_q, hold_q_e, stop_play_e):
                 ks_stop.stop_sounds(sound_q, log_q, hold_q_e, stop_play_e)
                 # Put current book's name in the play-queue.
                 sound_q.put(BOOK_NUMBER_SO_LIST[bookNumber])
-            # if the user is in the state of "CHAPTER SELECTION STATE" then decrease the chapter number
+            # if the user is in the state of "CHAPTER SELECTION STATE" then decrease
+            # the chapter number
             elif (systemState == 1):
                 chapterNumber -= 1
                 # chapter number cant be less than 0
@@ -296,7 +305,8 @@ def keystroke_processor(sound_q, log_q, hold_q_e, stop_play_e):
                 ks_stop.stop_sounds(sound_q, log_q, hold_q_e, stop_play_e)
                 # Put current chapter's name in the play-queue.
                 sound_q.put(ks_GLOBAL.CH_NAME_SO_LIST[chapterNumber])
-           # if the user is in the state of CONTINUE READING STATE then user can also schroll to previous read_items to listen that
+           # if the user is in the state of CONTINUE READING STATE then user can
+           # also schroll to previous read_items to listen that
             elif (systemState == 2):
                 if (chapterNumber == 1):
                     readItemNumber -= 1
